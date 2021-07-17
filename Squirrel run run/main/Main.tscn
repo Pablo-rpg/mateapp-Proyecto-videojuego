@@ -1,0 +1,169 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://main/Main.gd" type="Script" id=1]
+[ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gem/Gem.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/Kenney Bold.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://main/HUD.gd" type="Script" id=5]
+[ext_resource path="res://enemy/Froggy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/misc/touch_button.png" type="Texture" id=7]
+
+[sub_resource type="DynamicFont" id=1]
+size = 38
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 38
+font_data = ExtResource( 4 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 58.5524, 10 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 18.0551, 264.676 )
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 17.339, 265.392 )
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 1 )
+Gem = ExtResource( 3 )
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+
+[node name="GemContainer" type="Node2D" parent="."]
+
+[node name="HUD" type="Control" parent="."]
+margin_right = 480.0
+margin_bottom = 40.0
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+anchor_right = 1.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LabelScore" type="Label" parent="HUD/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 470.0
+margin_bottom = 68.0
+custom_fonts/font = SubResource( 1 )
+text = "0"
+
+[node name="LabelTimer" type="Label" parent="HUD/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 470.0
+margin_bottom = 68.0
+custom_fonts/font = SubResource( 1 )
+text = "0"
+align = 2
+
+[node name="GameOverLabel" type="Label" parent="HUD"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -238.947
+margin_top = 317.843
+margin_right = 241.053
+margin_bottom = 375.843
+custom_fonts/font = SubResource( 2 )
+text = "Game Over!"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="CherryTimer" type="Timer" parent="."]
+
+[node name="Froggy" parent="." instance=ExtResource( 6 )]
+position = Vector2( 137.315, 275.356 )
+jump_power = -350
+
+[node name="Platform" type="StaticBody2D" parent="."]
+position = Vector2( 131.307, 328.263 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform"]
+shape = SubResource( 3 )
+
+[node name="Boudaries" type="Node2D" parent="."]
+
+[node name="Left" type="StaticBody2D" parent="Boudaries"]
+position = Vector2( -21.2041, 366.929 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boudaries/Left"]
+shape = SubResource( 4 )
+
+[node name="Right" type="StaticBody2D" parent="Boudaries"]
+position = Vector2( 500.033, 360.485 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boudaries/Right"]
+shape = SubResource( 5 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ButtonContainer" type="Control" parent="CanvasLayer"]
+margin_left = -20.0
+margin_right = 20.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LeftButton" type="TouchScreenButton" parent="CanvasLayer/ButtonContainer"]
+position = Vector2( 100, 660 )
+rotation = -3.14159
+scale = Vector2( 0.75, 0.75 )
+normal = ExtResource( 7 )
+
+[node name="RightButton" type="TouchScreenButton" parent="CanvasLayer/ButtonContainer"]
+position = Vector2( 140, 600 )
+scale = Vector2( 0.75, 0.75 )
+normal = ExtResource( 7 )
+
+[node name="UpButton" type="TouchScreenButton" parent="CanvasLayer/ButtonContainer"]
+position = Vector2( 90, 610 )
+rotation = -1.5708
+scale = Vector2( 0.75, 0.75 )
+normal = ExtResource( 7 )
+
+[node name="BottomButton" type="TouchScreenButton" parent="CanvasLayer/ButtonContainer"]
+position = Vector2( 150, 650 )
+rotation = 1.5708
+scale = Vector2( 0.75, 0.75 )
+normal = ExtResource( 7 )
+[connection signal="hurt" from="Player" to="." method="_on_Player_hurt"]
+[connection signal="picked" from="Player" to="." method="_on_Player_picked"]
+[connection signal="timeout" from="GameTimer" to="." method="_on_GameTimer_timeout"]
+[connection signal="timeout" from="CherryTimer" to="." method="_on_CherryTimer_timeout"]
+[connection signal="pressed" from="CanvasLayer/ButtonContainer/LeftButton" to="Player" method="_on_LeftButton_pressed"]
+[connection signal="released" from="CanvasLayer/ButtonContainer/LeftButton" to="Player" method="_on_LeftButton_released"]
+[connection signal="pressed" from="CanvasLayer/ButtonContainer/RightButton" to="Player" method="_on_RightButton_pressed"]
+[connection signal="released" from="CanvasLayer/ButtonContainer/RightButton" to="Player" method="_on_RightButton_released"]
+[connection signal="pressed" from="CanvasLayer/ButtonContainer/UpButton" to="Player" method="_on_UpButton_pressed"]
+[connection signal="released" from="CanvasLayer/ButtonContainer/UpButton" to="Player" method="_on_UpButton_released"]
+[connection signal="pressed" from="CanvasLayer/ButtonContainer/BottomButton" to="Player" method="_on_BottomButton_pressed"]
+[connection signal="released" from="CanvasLayer/ButtonContainer/BottomButton" to="Player" method="_on_BottomButton_released"]
